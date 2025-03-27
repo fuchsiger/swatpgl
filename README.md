@@ -32,6 +32,6 @@ In case you find bugs & errors, have feedback or face any kind of application is
 
 [https://gitlab.com/lshm1/swatpgl](https://gitlab.com/lshm1/swatpgl)
 
-Navigate to */bin* to find the executables of the current releaSse.
+Navigate to */bin* to find the executables of the current release.
 <br/>
 An example SWAT+GL model is provided in the example folder. 
