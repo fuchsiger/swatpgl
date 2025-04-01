@@ -117,7 +117,7 @@ In the following image, we provide an example where 8 ES lead to 8 new land use 
 
 **Important**: LU class entries in the crop databse need to be called ES1, ES2,...,ESx as shown in the image below and then properly assigned with the LU map through your lookup table!
 
-![](E:\02_Models\06_GlacierModule\00_Documentation\02_doc_SWAT+GL\images\crop_database.png)
+![](./images/crop_database.png)
 
 <figcaption>Fig. 3: Example plant database, each ES needs a unique entry named as ES1, ES2 and so on.</figcaption>
 
