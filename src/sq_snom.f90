@@ -111,6 +111,10 @@
                 !! Adjust Melt Factor for time of year
                 smfac = (hru(j)%sno%meltmx + hru(j)%sno%meltmn) / 2. + Sin((time%day - 81) / 58.09) * &
                         (hru(j)%sno%meltmx - hru(j)%sno%meltmn) / 2.        !! 365/2pi = 58.09
+                !! Adjust for wet-day snowmelt (Rain on Snow)
+                if (glcode(1)%ros_flag == 1 .and. precip_eff > glpars(1)%pthr) then
+                    smfac = smfac + glpars(1)%pfac * (precip_eff - glpars(1)%pthr)
+                end if
                 snomlt = smfac * (((snotmp + w%tmax)/2.) - hru(j)%sno%melttmp)
             !!! Model 2: HTI    
             elseif (glcode(1)%sm_model == 1) then
@@ -119,6 +123,10 @@
                     smfac = (hru(j)%sno%meltmx + hru(j)%sno%meltmn) / 2. + Sin((time%day - 81) / 58.09) * &
                           (hru(j)%sno%meltmx - hru(j)%sno%meltmn) / 2.        !! 365/2pi = 58.09
                 endif
+                !! Adjust for wet-day snowmelt (Rain on Snow)
+                if (glcode(1)%ros_flag == 1 .and. precip_eff > glpars(1)%pthr) then
+                    smfac = smfac + glpars(1)%pfac * (precip_eff - glpars(1)%pthr)
+                end if
                 Ipot = w%solradmx /(3600.*24./10**6) !! Potential Direct Solar Radiation [W/m²] -> Conversion from MJ/(m^2*d)
                 snomlt = (smfac + hru(j)%sno%rfac_s * Ipot) * (((snotmp + w%tmax)/2.) - hru(j)%sno%melttmp)
             !! Model 2: ETI      
@@ -128,6 +136,10 @@
                     smfac = (hru(j)%sno%meltmx + hru(j)%sno%meltmn) / 2. + Sin((time%day - 81) / 58.09) * &
                           (hru(j)%sno%meltmx - hru(j)%sno%meltmn) / 2.        !! 365/2pi = 58.09
                 endif
+                !! Adjust for wet-day snowmelt (Rain on Snow)
+                if (glcode(1)%ros_flag == 1 .and. precip_eff > glpars(1)%pthr) then
+                    smfac = smfac + glpars(1)%pfac * (precip_eff - glpars(1)%pthr)
+                end if
                 G = w%solrad /(3600.*24./10**6) !! HRU SWR [W/m²] -> Conversion from MJ/m^2
                 snomlt = (smfac * (((snotmp + w%tmax) / 2.) - hru(j)%sno%melttmp)) + &
                            (hru(j)%sno%srfac_s * (1 - albday) * G)
@@ -136,11 +148,16 @@
                 smfac = (hru(j)%sno%meltmx + hru(j)%sno%meltmn) / 2. + Sin((time%day - 81) / 58.09) * &
                        (hru(j)%sno%meltmx - hru(j)%sno%meltmn) / 2.        !! 365/2pi = 58.09
                 Tmm = (w%tmax - hru(j)%sno%melttmp)/hru(j)%sno%f_exp    
+                !! Adjust for wet-day snowmelt (Rain on Snow)
+                if (glcode(1)%ros_flag == 1 .and. precip_eff > glpars(1)%pthr) then
+                    smfac = smfac + glpars(1)%pfac * (precip_eff - glpars(1)%pthr)
+                endif
                 snomlt = smfac * hru(j)%sno%f_exp * (Tmm + log(1 + exp(-Tmm)))     
             
             end if
             !! Adjust for areal extent of snow cover
             snomlt = snomlt * snocov
+
         else ! If Tmax < Tmelt
             snomlt = 0.
         end if  

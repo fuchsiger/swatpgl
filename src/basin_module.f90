@@ -100,6 +100,9 @@
       
       type glacier_params
             real :: tmix_ul = 6.5        !deg C ! Base Temp for Mixed Precip (below which mixed pcp occurs) [°C]
+            real :: pfac = 1.0           !deg C ! Melt factor for rain on snow events [mm/mm rain]
+            real :: pthr = 1.0           !-     ! Rainfall threshold height at which additional melt occurs [mm/d]
+
             !real :: exp_fac = 0.5     !-     ! Adjustment Factor for Exponential Snow Melt Model [-]
       end type glacier_params
       type (glacier_params), dimension (:), allocatable :: glpars

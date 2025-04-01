@@ -16,7 +16,6 @@ The extended snow module contains a collection of snow melt approaches, that cou
 <br/>In the original SWAT+, important parameters (particularly for mountain regions) such as TLAPS, PLAPS and SURLAG, are global parameters. In SWAT+GL they are incorporated on the HRU level to give users more flexibility. 
 <br/>
 
-
 Further insights about the implemention in SWAT can be received from our recently published Technical Note ([Schaffhauser et al. 2024](https://onlinelibrary.wiley.com/doi/10.1111/1752-1688.13199)), as well as our application article available as preprint in HESS ([Schaffhauser et al. 2024b](https://hess.copernicus.org/preprints/hess-2024-89/)).
 
 ## How to Cite
@@ -33,6 +32,6 @@ In case you find bugs & errors, have feedback or face any kind of application is
 
 [https://gitlab.com/lshm1/swatpgl](https://gitlab.com/lshm1/swatpgl)
 
-<br/> Use the latest version and navigate to */bin* to find the executables of the current release.
+Navigate to */bin* to find the executables of the current release.
 <br/>
 An example SWAT+GL model is provided in the example folder. 
