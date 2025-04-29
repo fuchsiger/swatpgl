@@ -196,6 +196,8 @@ This file was not existing in [Schaffhauser et al. 2024](https://onlinelibrary.w
 
 <figcaption>Fig. 6: swatgl_parameters.gl file.</figcaption>
 
+<br/>
+
 The file consists only of one parameter so far, but will be extended in future releases.
 
 - *tmix_ul*: Base temperature below which mixed precipitation is possible [°C]. Only active when pmix_flag is set to 1. 
@@ -261,7 +263,7 @@ To determine more hydrology parameters in a spatially distributed way, such as l
 Fig. 9: Modification of hydrology.hyd file.
 </div>
 
-
+<br/>
 
 * *surlag*: Surface runoff lag coefficient [-]; Similar to the global surlag.
 
@@ -278,8 +280,6 @@ To make use of the newly introduced hydrological changes such as spatially distr
 <div>
 Fig. 10: Modification of parameters.bsn file.
 </div>
-
-
 
 - *surlag_sd*: New column and flag that sets whether surface runoff lag coefficients are set globally or spatially distributed (HRU scale) [-]; 0 = Globally (SWAT+ Default) / 1 = HRU scale (must be set in hydrology.hyd then) 
 
