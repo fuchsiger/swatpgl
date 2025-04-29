@@ -118,7 +118,7 @@ In the following image, we provide an example where 8 ES lead to 8 new land use 
 
 **Important**: LU class entries in the crop databse need to be called ES1, ES2,...,ESx as shown in the image below and then properly assigned with the LU map through your lookup table!
 
-![](E:\02_Models\06_GlacierModule\00_Documentation\02_doc_SWAT+GL\images\crop_database.png)
+![](./images/crop_database.png)
 
 <figcaption>Fig. 3: Example plant database, each ES needs a unique entry named as ES1, ES2 and so on.</figcaption>
 
@@ -134,6 +134,8 @@ To prepare the required 4 new and 2 modified input files you need to setup the S
 
 * *hydrology.hyd* has to be modified after the SWAT+ model setup
 
+* *file.cio* has to be modified by adding one additional file name after the SWAT+ model setup
+
 * *glaciers_hru.gl* HRUs must be defined through SWAT+ model and the modified land use map that considers ES, so that you can parameterize all glacier HRUs
 
 * *swat_gles.gl* Subbasin must be defined through SWAT+ model setup so that you can initialize glacier area and volume per subbasin and ES <br/>
@@ -148,7 +150,7 @@ You then create the *swat_gles_full.txt* file, where you set the glacier area an
 
 <figcaption>Fig. 4: swat_gles.gl file.</figcaption>
 
-Figure 4 shows an example with two subbasins (subbasin 1 and subbasin 2) and 8ESs.  The model can have for example 5 subbasins in total, but only subbasin 1 and 2 contain glaciers, as shown here. You have to provide one line per ES for every glaciated subbasin, regardless whether the ES is actually glaciated in the subbasin. In this example you can see that in subbasin 2 only ES1 to 7 are present, ES8 on the other hand is not present. It thus just receives a line of 0 values. A couple of additional columns are provided for the SWAT+GL initialization. You can ignore the *gl_fr* column, it is not used but serves as side information, you can put 0 values or other dummy values here. 
+<br/>Figure 4 shows an example with two subbasins (subbasin 1 and subbasin 2) and 8ESs.  The model can have for example 5 subbasins in total, but only subbasin 1 and 2 contain glaciers, as shown here. You have to provide one line per ES for every glaciated subbasin, regardless whether the ES is actually glaciated in the subbasin. In this example you can see that in subbasin 2 only ES1 to 7 are present, ES8 on the other hand is not present. It thus just receives a line of 0 values. A couple of additional columns are provided for the SWAT+GL initialization. You can ignore the *gl_fr* column, it is not used but serves as side information, you can put 0 values or other dummy values here. 
 
 The colums in detail are:
 
@@ -174,7 +176,7 @@ This file was not existing in [Schaffhauser et al. 2024](https://onlinelibrary.w
 
 <figcaption>Fig. 5: swatgl_codes.gl file.</figcaption>
 
-We have a couple of setup parameters here:
+<br/>We have a couple of setup parameters here:
 
 * *sm_model*: Defines snow melt routine used; 0 = Standard SWAT / 1 = HTI / 2 = ETI / 3 = Exp. TI 
 
@@ -198,9 +200,7 @@ The file consists only of one parameter so far, but will be extended in future r
 
 - *tmix_ul*: Base temperature below which mixed precipitation is possible [°C]. Only active when pmix_flag is set to 1. 
 - *pfac*: Melt factor for rain on snow events [mm/(mm precip.)]; Only used if rain on snow active (ros_flag = 1)
-- *pthr*: Rainfall threshold height at which additional melt occurs [mm/d]; Only used if rain on snow active (ros_flag = 1)
-
-<br/>
+- *pthr*: Rainfall threshold height at which additional melt occurs [mm/d]; Only used if rain on snow active (ros_flag = 1)<br/>
 
 ### Glacier HRU Initialization: *glacier_hrus.gl*
 
@@ -210,7 +210,7 @@ Here you determine the parameters for all glacier HRUs. The file can be prepared
 
 <figcaption>Fig. 7: glacier_hrus.gl file.</figcaption>
 
-The file has one row for each glacier HRU, e.g. if your model has 100 HRUs and 50 glacier HRUs the file contains 50 lines (+ 1 header line as seen in Fig. 7). Glaciated HRUs receive the desired parameter values accordingly.
+<br/>The file has one row for each glacier HRU, e.g. if your model has 100 HRUs and 50 glacier HRUs the file contains 50 lines (+ 1 header line as seen in Fig. 7). Glaciated HRUs receive the desired parameter values accordingly.
 
 The columns refer to HRU ID and 5 parameters:
 
@@ -243,6 +243,8 @@ To make use of the newly introduced snow melt routines. In total 4 new columns a
 
 <figcaption> Fig. 8: Modification of snow.sno file. </figcaption>
 
+<br/>
+
 - *tfac_s*: Temperature degree day factor for snow [mm/(d*C°)]; Only used for HTI or ETI (sm_model = 1 or 2). If the melt factor from SWAT standard wants to be use a value of 0 here (then the sinusoidal factor that accounts for daily variations is used).
 
 - *rfac_s*: Radiation factor for snow [mm m²/(d *W *°C)]; Only used for HTI (sm_model= 1)
@@ -259,6 +261,8 @@ To determine more hydrology parameters in a spatially distributed way, such as l
 Fig. 9: Modification of hydrology.hyd file.
 </div>
 
+
+
 * *surlag*: Surface runoff lag coefficient [-]; Similar to the global surlag.
 
 * *plaps*: Precipitation lag factor [mm/m]; Similar to the global plaps.
@@ -274,6 +278,8 @@ To make use of the newly introduced hydrological changes such as spatially distr
 <div>
 Fig. 10: Modification of parameters.bsn file.
 </div>
+
+
 
 - *surlag_sd*: New column and flag that sets whether surface runoff lag coefficients are set globally or spatially distributed (HRU scale) [-]; 0 = Globally (SWAT+ Default) / 1 = HRU scale (must be set in hydrology.hyd then) 
 
