@@ -19,7 +19,7 @@
       integer :: j
       integer :: iob
       integer :: ipl
-      integer :: glid, subid ! SWAT+GL
+      integer :: glid, subid, idx ! SWAT+GL
       real :: const
       real :: sw_init
       real :: sno_init
@@ -136,8 +136,11 @@
             glid = hru_index_map(j)
             if (glid>0) then
                 subid = hru_gl_obj(glid)%hru_sub_id
-                glmb_a(subid)%glmb = glmb_a(subid)%glmb + &
-                    ((hwb_d(j)%glacc - hwb_d(j)%glmlt - hwb_d(j)%glsubl)*ob(j)%area_ha*10000/1000) ! lsu_elem(j)%bsn_frac  HRU fraction in basin   
+                idx = hru_gl_obj(glid)%mask_ind
+                if (idx>0) then ! Check whether no mini glacierized subbasin
+                    glmb_a(idx)%glmb = glmb_a(idx)%glmb + &
+                        ((hwb_d(j)%glacc - hwb_d(j)%glmlt - hwb_d(j)%glsubl)*ob(j)%area_ha*10000/1000) ! lsu_elem(j)%bsn_frac  HRU fraction in basin             
+                end if
             end if
         end if
                 

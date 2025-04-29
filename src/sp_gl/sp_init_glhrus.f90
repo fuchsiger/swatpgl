@@ -10,13 +10,16 @@
     !! Annual Volume HRU Redistribution 
     !! Initialize Glacier HRUS (HRU Areas & GWEs based on different Scales such as Basin, Total Gl. A, Subbasin etc.)  
     do j = 1,size(hru_gl_obj) ! Loop over all Glacier HRUs 
-        i = hrus_sub_assign(j)
+        !i = hrus_sub_assign(j)
+        i = hru_gl_obj(j)%mask_ind
         ja = hru_gl_obj(j)%hru_es_id
                 
         ! Assign Glacier HRU Object
-        ! hru_gl_obj(j)%hru_gla = hru_gla(j) 
-        hru_gl_obj(j)%hru_glww2 = es_obj_real(i)%es_glw(ja)
-        hru_gl_obj(j)%hru_glww  = es_obj_real(i)%es_glw(ja) * hru_gl_obj(j)%hru_fr_es
+        ! hru_gl_obj(j)%hru_gla = hru_gla(j)
+        if (i>0) then
+            hru_gl_obj(j)%hru_glww2 = es_obj_real(i)%es_glw(ja)
+            hru_gl_obj(j)%hru_glww  = es_obj_real(i)%es_glw(ja) * hru_gl_obj(j)%hru_fr_es
+        endif 
     end do      
     
     !! Update Glacier Area etc. 

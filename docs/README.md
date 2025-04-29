@@ -36,6 +36,7 @@ Both datasets are needed for the initialization of SWAT+GL. Glacier outlines for
 4. *swatgl_parameters.gl*
 5. *snow.sno* (already existing but modified)
 6. *hydrology.hru* (already existing but modified)
+7. *file.cio* (already existing but modifies)
 
 File names are hard-coded and thus must be used as written above. One example file for each can be found in the documentation folder.
 <br/> 
@@ -117,7 +118,7 @@ In the following image, we provide an example where 8 ES lead to 8 new land use 
 
 **Important**: LU class entries in the crop databse need to be called ES1, ES2,...,ESx as shown in the image below and then properly assigned with the LU map through your lookup table!
 
-![](./images/crop_database.png)
+![](E:\02_Models\06_GlacierModule\00_Documentation\02_doc_SWAT+GL\images\crop_database.png)
 
 <figcaption>Fig. 3: Example plant database, each ES needs a unique entry named as ES1, ES2 and so on.</figcaption>
 
@@ -278,6 +279,14 @@ Fig. 10: Modification of parameters.bsn file.
 
 - *lapse*: The lapse rates flag is extended to provide lapse rates spatially distributed; 0 = no lapse rates / 1 = global lapse rates / 2 = HRU-based lapse rates (must be set in hydrology.hyd)
 
+## File Cio Modification: file.cio
+
+In the file.cio file just add glacier_hrus.gl to the hydrology line as illustrated below.
+
+![](./images/swatgl_file_cio.png)
+
+<figcaption>Fig. 11: File.cio adaption.</figcaption>
+
 ## Model Run
 
 When everything is prepared just run the executable found in Gitlab under */bin* and called *swat+gl_release.exe* and *swat+gl_debug.exe*
@@ -290,7 +299,7 @@ In the following we want to briefly give an idea of the subbasin-specific glacie
 
 <img title="Logo title" src="./images/icethi_example.png" alt="" width=""> 
 
-<figcaption>Fig. 11: Ice thickness distribution within one example subbasin.</figcaption>
+<figcaption>Fig. 12: Ice thickness distribution within one example subbasin.</figcaption>
 
 ***
 
@@ -302,7 +311,7 @@ After the model run you find new columns in the *output.hru* and a new file call
 
 ![](./images/gl_mb_aa.png)
 
-<figcaption>Fig. 12: gl_mb_aa.txt file.</figcaption>
+<figcaption>Fig. 13: gl_mb_aa.txt file.</figcaption>
 
 The file contains annual mass balance summaries. Annual refers to the glaciological year (October 1st to September 30th). Provided are information on the net mass balance in m³ (*dM_m3*) where negative values indicating ablation and positive values accumulation, the new water equivalent of ice for each ES in mm (*GWE_mm*) and the (glacier) area of each ES in km² (*Agl_km2*). Net mass balance change refers to the total change on the subbasin scale rather than the ES scale! <br/>
 

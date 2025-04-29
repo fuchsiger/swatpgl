@@ -184,7 +184,8 @@
             !character(len=40) :: name = "null"
             integer :: hru_id = 0  ! Actual HRU ID (SWAT+ Model HRU ID)
             integer :: hru_sub_id = 0 ! -  | Unique Glacier Subbasin ID
-            integer :: hru_es_id = 0  
+            integer :: hru_es_id = 0
+            integer :: mask_ind = 0 ! Mask ID of HRU (Glacier Subb. # differs from total Subb. # so mask index refers to reduced size) 
             real :: hru_fr_es = 0.      
             real :: hru_glww2 = 0.      
             real :: hru_glww = 0.      

@@ -19,7 +19,7 @@
       imax = 0
       
       
-      !! read snow database data from snow.sno
+      !! read snow database data from glacier_hrus.gl
       inquire (file=in_hyd%glacier, exist=i_exist)
       if (.not. i_exist .or. in_hyd%glacier == "null") then
         allocate (gldb(0:0))
@@ -55,7 +55,7 @@
       endif
       close (107)
       
-     db_mx%gl = imax
+      db_mx%gl = imax
       
       return
       end subroutine glacierdb_read

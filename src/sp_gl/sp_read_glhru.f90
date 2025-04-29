@@ -12,18 +12,13 @@
     read(iu1,'(A)') glpars
     ierr=0
     cnt=0
+    cnt = 0
+    ierr = 0
     do while (ierr==0) ! Loop when Subbasin Assignment is not done
-        read(iu1, *, iostat=ierr) idum, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, tmp7, tmp8, tmp9, tmp10, tmp11 
+        read(iu1, *, iostat=ierr) idum, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, tmp7, tmp8, tmp9, tmp10  
     cnt=cnt+1
     end do
-    !do while (ierr==0) ! Loop when Subbasin Assignment is not done
-    !    read(iu1, *, iostat=ierr) idum, tmp1, tmp2, tmp3, tmp4, tmp5 
-    !cnt=cnt+1
-    !end do
     cnt = cnt - 1
-    !allocate(glhruids(cnt),glmlttmp(cnt),glmfmx(cnt),glmfmn(cnt),f_frz(cnt),f_accu(cnt))
-    !allocate(glhruids(cnt),hrus_sub_assign(cnt),glmtmp(cnt),glmfmx(cnt),glmfmn(cnt),f_frz(cnt),f_accu(cnt),tfac_s(cnt), &
-    !       tfac_i(cnt),rfac_s(cnt),rfac_i(cnt),srfac_s(cnt),srfac_i(cnt),pr_fac(cnt),gl_lag(cnt),f_exp(cnt))
     allocate(glhruids(cnt),hrus_sub_assign(cnt),glmtmp(cnt),glmfmx(cnt),glmfmn(cnt),f_frz(cnt),f_accu(cnt), &
             tfac_i(cnt),rfac_i(cnt),srfac_i(cnt),gl_lag(cnt))
     hrus_sub_assign = 0
@@ -45,8 +40,6 @@
     rewind(iu1)
     read(iu1,'(A)') titldum
     do i=1, cnt       
-        !read(iu1, *, iostat=ierr) glhruids(i),hrus_sub_assign(i),glmtmp(i),glmfmx(i),glmfmn(i),f_frz(i),f_accu(i),tfac_s(cnt), &
-        !                 tfac_i(i),rfac_s(i),rfac_i(i),srfac_s(i),srfac_i(i),pr_fac(i),gl_lag(i),f_exp(i)
         read(iu1, *, iostat=ierr) glhruids(i),hrus_sub_assign(i),glmtmp(i),glmfmx(i),glmfmn(i),f_frz(i),f_accu(i), &
                          tfac_i(i),rfac_i(i),srfac_i(i),gl_lag(i)
     end do

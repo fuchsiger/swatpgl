@@ -23,9 +23,9 @@
         real :: lat_orgp = 0.      !!ppm           |organic P concentration in lateral flow
         real :: pet_co  = 1.0      !!none          |coefficient related to radiation used in Hargreaves equation
         real :: latq_co = 0.3      !!none          |0-1             |lateral soil flow coefficient - linear adjustment to daily lat flow
-        real :: surlag = 4         !!none          |4-20            |surface runoff lag time (days) - spatially distributed version
-        real :: plaps = 0.5        !!none          |0-500           |precipitation lapse rate (mm/m) - spatially distributed version
-        real :: tlaps = 6.5        !!none          |-10-10          |temperature lapse rate (°C/km)- spatially distributed version
+        real :: surlag = 4         !!none          |4-20            |surface runoff lag time (days) - spatially distributed version Timo
+        real :: plaps = 0.5        !!none          |0-500           |precipitation lapse rate (mm/m) - spatially distributed version Timo
+        real :: tlaps = 6.5        !!none          |-10-10          |temperature lapse rate (°C/km)- spatially distributed version Timo
       end type hydrology_db
       type (hydrology_db), dimension (:), allocatable :: hyd_db
             

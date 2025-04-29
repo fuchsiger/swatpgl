@@ -159,7 +159,7 @@
        character(len=25) :: hydrol_hyd = "hydrology.hyd"
        character(len=25) :: topogr_hyd = "topography.hyd"
        character(len=25) :: field_fld  = "field.fld"
-       character(len=25) :: glacier = "glacier_hrus.gl"
+       character(len=25) :: glacier = "glacier_hrus.gl" ! SWAT+GL
       end type input_hydrology
       type (input_hydrology) :: in_hyd
             

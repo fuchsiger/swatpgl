@@ -127,7 +127,7 @@
                    
         !! write perco to hydrology-cal.hyd
         write (5001,*) " hydrology-cal.hyd developed from soft data calibration"
-        !write (5001,*) " NAME LAT_TTIME LAT_SED CAN_MAX  ESCO  EPCO ORGN_ENRICH ORGP_ENRICH CN3_SWF &
+        !write (5001,*) " NAME LAT_TTIME LAT_SED CAN_MAX  ESCO  EPCO ORGDN_ENRICH ORGP_ENRICH CN3_SWF &
         !                                BIO_MIX PERCO LAT_ORGN LAT_ORGP PET_CO LATQ_CO NOT_USED"
         write (5001,5010)
 5010    format (1x,'NAME',38x,'LAT_TTIME',12x,'LAT_SED',8x,'CAN_MAX',11x,'ESCO',7x,'EPCO',8x,        &

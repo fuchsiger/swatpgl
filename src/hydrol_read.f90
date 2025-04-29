@@ -16,7 +16,7 @@
       
       mhydrol = 0
       eof = 0
-      imax = 0
+      imax = 1
       
       !! read all data from hydrol.dat
       inquire (file=in_hyd%hydrol_hyd, exist=i_exist)

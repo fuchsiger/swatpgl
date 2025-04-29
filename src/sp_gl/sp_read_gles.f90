@@ -8,14 +8,19 @@
     use topography_data_module
     use input_file_module
     use maximum_data_module 
+    use aquifer_module
     use hydrology_data_module
     use hydrograph_module, only : ob, sp_ob
-    integer:: IU, ierr, cnt, idum, k, es_cnt
+    integer:: IU, ierr, cnt, idum, k, es_cnt,cnt2
     integer:: sb_cnt, hru_cnt, counter, ios
     character (len=4) :: cropname, count2
     logical, dimension(:), allocatable :: mask, mask2
+    integer, dimension(:), allocatable :: mask3
     integer :: vv
-    real :: vol_check, hru_es_frac
+    integer :: subt
+    integer :: idx
+    real :: vol1, vol2, diff, dst, count_nonzero
+    real :: vol_check, hru_es_frac, subtest
     character(len=14) :: hedgl(6)
     
     !! Initialize Variables
@@ -24,6 +29,8 @@
     hru_cnt = 0.
     esdist = 0.
     vol_check = 0.
+    vol1 = 0.
+    vol2 = 0.
     !! e) Prepare Annual Output Summary File for Writing SWAT+GL Outputs
     open(unit=89, file="gl_mb_aa.txt")
     hedgl = (/" Sub","  ES","  yr","   dM_m3","   GWE_mm"," Agl_km2"/)
@@ -59,13 +66,26 @@
     end do
     !! Compute number of glaciated subbasins
     allocate(mask(cnt))
+    allocate(mask3(cnt))
     mask = .true.
+    mask3 = 0
+    cnt2=1
     do i = 1, cnt-1
         if (mask(i)) then
             mask(i+1:cnt) = mask(i+1:cnt) .and. (glsubs(i+1:cnt) /= glsubs(i))
+            if (i>1) then
+                cnt2 = cnt2+1
+            endif
+            mask3(i) = cnt2
+        else
+            mask3(i) = cnt2
+            if (i==cnt-1) then
+                mask3(i+1) = cnt2
+            endif 
         end if
     end do
     sb_cnt = count(mask)
+    !sb_cnt = 92
     ! Allocate Subbasin Variables
     allocate(subs_gl(sb_cnt),gla_sub(sb_cnt),glw_sub(sb_cnt),glww_sub(sb_cnt),glfr_sub_real(sb_cnt), & 
             glv_sub(sb_cnt),tot_glhru_sub(sb_cnt),gla_sub_real(sb_cnt),glww_sub_real(sb_cnt))
@@ -79,17 +99,23 @@
     glw_sub_real=0.
     glww_sub_real=0.
     glfr_sub_real=0.
+
     !! b) Identify Glacier Subs 
     !! Compute Subbasin Storages
     do i=1, cnt       
     ! subs_gl(glsubs(i))=1
     ! Calculate Subbasin Number of ES, Subbasin Glacier Area (km²), Subbasin Total GWE
     if (es_gla(i)>0) then
-        subs_gl(glsubs(i))=glsubs(i) ! Glaciated Subbasin IDs
-        gla_sub(glsubs(i))=gla_sub(glsubs(i))+es_gla(i) ! Glacier Area per Sub
-        glv_sub(glsubs(i))=glv_sub(glsubs(i))+es_glv(i) ! Glacier Volume per Sub (Ice)
-        glw_sub(glsubs(i))=glw_sub(glsubs(i))+es_glw(i)! Glacier GWE per Sub
-        glww_sub(glsubs(i))=glww_sub(glsubs(i))+(es_glw(i)*es_glfr(i)) ! Glacier Weighted GWE per Sub
+        !subs_gl(glsubs(i))=glsubs(i) ! Glaciated Subbasin IDs
+        !gla_sub(glsubs(i))=gla_sub(glsubs(i))+es_gla(i) ! Glacier Area per Sub
+        !glv_sub(glsubs(i))=glv_sub(glsubs(i))+es_glv(i) ! Glacier Volume per Sub (Ice)
+        !glw_sub(glsubs(i))=glw_sub(glsubs(i))+es_glw(i)! Glacier GWE per Sub
+        !glww_sub(glsubs(i))=glww_sub(glsubs(i))+(es_glw(i)*es_glfr(i)) ! Glacier Weighted GWE per Sub
+        subs_gl(mask3(i))=glsubs(i) ! Glaciated Subbasin IDs
+        gla_sub(mask3(i))=gla_sub(mask3(i))+es_gla(i) ! Glacier Area per Sub
+        glv_sub(mask3(i))=glv_sub(mask3(i))+es_glv(i) ! Glacier Volume per Sub (Ice)
+        glw_sub(mask3(i))=glw_sub(mask3(i))+es_glw(i)! Glacier GWE per Sub
+        glww_sub(mask3(i))=glww_sub(mask3(i))+(es_glw(i)*es_glfr(i)) ! Glacier Weighted GWE per Sub
     end if
     end do    
     
@@ -103,58 +129,58 @@
         end if
         !! Allocate ES_Obj 
         if (esids(i)==1) then
-            allocate(es_obj(glsubs(i))%es_id(es_cnt))
-            allocate(es_obj(glsubs(i))%es_gla(es_cnt))
-            allocate(es_obj(glsubs(i))%es_gla_scale(es_cnt))
-            allocate(es_obj(glsubs(i))%es_gla_init(es_cnt))
-            allocate(es_obj(glsubs(i))%es_glv(es_cnt))
-            allocate(es_obj(glsubs(i))%es_glw(es_cnt))
-            allocate(es_obj(glsubs(i))%es_glw_init(es_cnt))
-            allocate(es_obj(glsubs(i))%es_glfr(es_cnt))
-            allocate(es_obj(glsubs(i))%es_glww(es_cnt))
-            allocate(es_obj(glsubs(i))%es_elup(es_cnt))
+            allocate(es_obj(mask3(i))%es_id(es_cnt))
+            allocate(es_obj(mask3(i))%es_gla(es_cnt))
+            allocate(es_obj(mask3(i))%es_gla_scale(es_cnt))
+            allocate(es_obj(mask3(i))%es_gla_init(es_cnt))
+            allocate(es_obj(mask3(i))%es_glv(es_cnt))
+            allocate(es_obj(mask3(i))%es_glw(es_cnt))
+            allocate(es_obj(mask3(i))%es_glw_init(es_cnt))
+            allocate(es_obj(mask3(i))%es_glfr(es_cnt))
+            allocate(es_obj(mask3(i))%es_glww(es_cnt))
+            allocate(es_obj(mask3(i))%es_elup(es_cnt))
             
-            allocate(es_obj_real(glsubs(i))%es_id(es_cnt))
-            allocate(es_obj_real(glsubs(i))%es_gla(es_cnt))
-            allocate(es_obj_real(glsubs(i))%es_gla_scale(es_cnt))
-            allocate(es_obj_real(glsubs(i))%es_gla_init(es_cnt))
-            allocate(es_obj_real(glsubs(i))%es_glv(es_cnt))
-            allocate(es_obj_real(glsubs(i))%es_glw(es_cnt))
-            allocate(es_obj_real(glsubs(i))%es_glw_init(es_cnt))
-            allocate(es_obj_real(glsubs(i))%es_glfr(es_cnt))
-            allocate(es_obj_real(glsubs(i))%es_glww(es_cnt))
-            allocate(es_obj_real(glsubs(i))%es_elup(es_cnt))
+            allocate(es_obj_real(mask3(i))%es_id(es_cnt))
+            allocate(es_obj_real(mask3(i))%es_gla(es_cnt))
+            allocate(es_obj_real(mask3(i))%es_gla_scale(es_cnt))
+            allocate(es_obj_real(mask3(i))%es_gla_init(es_cnt))
+            allocate(es_obj_real(mask3(i))%es_glv(es_cnt))
+            allocate(es_obj_real(mask3(i))%es_glw(es_cnt))
+            allocate(es_obj_real(mask3(i))%es_glw_init(es_cnt))
+            allocate(es_obj_real(mask3(i))%es_glfr(es_cnt))
+            allocate(es_obj_real(mask3(i))%es_glww(es_cnt))
+            allocate(es_obj_real(mask3(i))%es_elup(es_cnt))
         end if
         
         ! Initialize with Read in Data
-        es_obj(glsubs(i))%sub_id = glsubs(i) 
-        es_obj(glsubs(i))%es_mx_elev = 0.
-        es_obj(glsubs(i))%es_mn_elev = 0.
-        es_obj(glsubs(i))%es_id(esids(i)) = esids(i)
-        es_obj(glsubs(i))%es_gla(esids(i)) = es_gla(i)
-        es_obj(glsubs(i))%es_gla_scale(esids(i)) = es_gla(i)
-        es_obj(glsubs(i))%es_gla_init(esids(i)) = es_gla(i)
-        es_obj(glsubs(i))%es_glv(esids(i)) = es_glv(i)
-        es_obj(glsubs(i))%es_glw(esids(i)) = es_glw(i)
-        es_obj(glsubs(i))%es_glw_init(esids(i)) = es_glw(i)
-        es_obj(glsubs(i))%es_glfr(esids(i)) = es_glfr(i)
-        es_obj(glsubs(i))%es_glww(esids(i)) = es_glw(i)*es_glfr(i)
-        es_obj(glsubs(i))%es_elup(esids(i)) = es_elup(i)
+        es_obj(mask3(i))%sub_id = glsubs(i) 
+        es_obj(mask3(i))%es_mx_elev = 0.
+        es_obj(mask3(i))%es_mn_elev = 0.
+        es_obj(mask3(i))%es_id(esids(i)) = esids(i)
+        es_obj(mask3(i))%es_gla(esids(i)) = es_gla(i)
+        es_obj(mask3(i))%es_gla_scale(esids(i)) = es_gla(i)
+        es_obj(mask3(i))%es_gla_init(esids(i)) = es_gla(i)
+        es_obj(mask3(i))%es_glv(esids(i)) = es_glv(i)
+        es_obj(mask3(i))%es_glw(esids(i)) = es_glw(i)
+        es_obj(mask3(i))%es_glw_init(esids(i)) = es_glw(i)
+        es_obj(mask3(i))%es_glfr(esids(i)) = es_glfr(i)
+        es_obj(mask3(i))%es_glww(esids(i)) = es_glw(i)*es_glfr(i)
+        es_obj(mask3(i))%es_elup(esids(i)) = es_elup(i)
         
         ! Initialize with 0 Values
-        es_obj_real(glsubs(i))%sub_id = glsubs(i)
-        es_obj_real(glsubs(i))%es_mx_elev = 0.
-        es_obj_real(glsubs(i))%es_mn_elev = 0. 
-        es_obj_real(glsubs(i))%es_id(esids(i)) = esids(i)
-        es_obj_real(glsubs(i))%es_gla(esids(i)) = 0.
-        es_obj_real(glsubs(i))%es_gla_scale(esids(i)) = 0.
-        es_obj_real(glsubs(i))%es_gla_init(esids(i)) = 0.
-        es_obj_real(glsubs(i))%es_glv(esids(i)) = 0.
-        es_obj_real(glsubs(i))%es_glw(esids(i)) = 0.
-        es_obj_real(glsubs(i))%es_glw_init(esids(i)) = 0.
-        es_obj_real(glsubs(i))%es_glfr(esids(i)) = 0.
-        es_obj_real(glsubs(i))%es_glww(esids(i)) = 0.
-        es_obj_real(glsubs(i))%es_elup(esids(i)) = es_elup(i)
+        es_obj_real(mask3(i))%sub_id = glsubs(i)
+        es_obj_real(mask3(i))%es_mx_elev = 0.
+        es_obj_real(mask3(i))%es_mn_elev = 0. 
+        es_obj_real(mask3(i))%es_id(esids(i)) = esids(i)
+        es_obj_real(mask3(i))%es_gla(esids(i)) = 0.
+        es_obj_real(mask3(i))%es_gla_scale(esids(i)) = 0.
+        es_obj_real(mask3(i))%es_gla_init(esids(i)) = 0.
+        es_obj_real(mask3(i))%es_glv(esids(i)) = 0.
+        es_obj_real(mask3(i))%es_glw(esids(i)) = 0.
+        es_obj_real(mask3(i))%es_glw_init(esids(i)) = 0.
+        es_obj_real(mask3(i))%es_glfr(esids(i)) = 0.
+        es_obj_real(mask3(i))%es_glww(esids(i)) = 0.
+        es_obj_real(mask3(i))%es_elup(esids(i)) = es_elup(i)
     end do
     ! Max & Min Elev of Glacier ES per Subbasin
     do i = 1,sb_cnt ! Loop Over Subbasin
@@ -180,8 +206,19 @@
     
     !! d) Recalculate ES & Subbasin Glacier Areas based on HRUs 
     !! Count Glacier HRUs per Subbasin
+
     do j = 1,hru_cnt ! Loop over All Glacier HRUs
-        i = hrus_sub_assign(j)
+            subt = hrus_sub_assign(j)
+            idx = 0
+            do i = 1, size(subs_gl)
+                if (subs_gl(i) == subt) then
+                    !idx = i
+                    idx = i
+                    exit
+                end if
+            end do
+            if (idx == 0) cycle  ! Skip if subbasin not in glacier list
+
             cropname=hru(glhruids(j))%LAND_USE_MGT_C(1:4) ! Crop Name to get ES #
             if (cropname(len_trim(cropname):len_trim(cropname)) < '0' .or. cropname(len_trim(cropname):len_trim(cropname)) > '9') then
                 cropname = cropname(3:len_trim(cropname)-1)   ! Exclude the last character
@@ -190,22 +227,49 @@
             end if
             read(cropname,"(I)") counter ! Get Index of ES (e.g. ES6 = 6)
             ! Update Subbasin & ES with actual/real values (HRU-derived)
-            gla_sub_real(i) = gla_sub_real(i) + ob(glhruids(j))%area_ha/100 ! Subbasin Glacier Area Actual (km²)
+            gla_sub_real(idx) = gla_sub_real(idx) + ob(glhruids(j))%area_ha/100 ! Subbasin Glacier Area Actual (km²)
             !glfr_sub_real(i) = glfr_sub_real(i)/ob(glhruids(j))%area_ha/100    ! Calculate Glacierized Subbasin Fraction wrt Subbasin Area 
-            es_obj_real(i)%es_gla(counter) = es_obj_real(i)%es_gla(counter) + ob(glhruids(j))%area_ha/100 ! ES Glacier Area Actual (km²)
-            es_obj_real(i)%es_gla_scale(counter) = es_obj_real(i)%es_gla(counter)
-            es_obj_real(i)%es_gla_init(counter) = es_obj_real(i)%es_gla(counter)
-            fac_area = es_obj(i)%es_gla(counter)/es_obj_real(i)%es_gla(counter) ! As the original WGWE corresponds to the initiliazed area it must be updated with the actual area 
+            es_obj_real(idx)%es_gla(counter) = es_obj_real(idx)%es_gla(counter) + ob(glhruids(j))%area_ha/100 ! ES Glacier Area Actual (km²)
+            es_obj_real(idx)%es_gla_scale(counter) = es_obj_real(idx)%es_gla(counter)
+            es_obj_real(idx)%es_gla_init(counter) = es_obj_real(idx)%es_gla(counter)
+            fac_area = es_obj(idx)%es_gla(counter)/es_obj_real(idx)%es_gla(counter) ! As the original WGWE corresponds to the initiliazed area it must be updated with the actual area 
                             
-            es_obj_real(i)%es_glww(counter) = es_obj(i)%es_glww(counter) * fac_area ! Actual ES WGWE (based on HRUs and updated Gl. A) 
-            es_obj_real(i)%es_glw(counter) = es_obj(i)%es_glw(counter) * fac_area ! Actual ES GWE (based on HRUs and updated Gl. A) 
-            es_obj_real(i)%es_glw_init(counter) = es_obj(i)%es_glw(counter) * fac_area ! Actual ES GWE (based on HRUs and updated Gl. A) 
-            glww_sub_real(i) = glww_sub_real(i) + es_obj_real(i)%es_glww(counter) ! Actual Subbasin WGWE (based on HRUs and updated Gl. A)
-            es_obj_real(i)%es_glfr(counter) = es_obj_real(i)%es_gla(counter)/gla_sub_real(i) ! Fraction of ES of Glacierized Subbasin Area
-            es_obj_real(i)%es_glv(counter) = es_obj_real(i)%es_gla(counter) * es_obj_real(i)%es_glw(counter)/1.0e6 
+            es_obj_real(idx)%es_glww(counter) = es_obj(idx)%es_glww(counter) * fac_area ! Actual ES WGWE (based on HRUs and updated Gl. A) 
+            es_obj_real(idx)%es_glw(counter) = es_obj(idx)%es_glw(counter) * fac_area ! Actual ES GWE (based on HRUs and updated Gl. A) 
+            es_obj_real(idx)%es_glw_init(counter) = es_obj(idx)%es_glw(counter) * fac_area ! Actual ES GWE (based on HRUs and updated Gl. A) 
+            glww_sub_real(idx) = glww_sub_real(idx) + es_obj_real(idx)%es_glww(counter) ! Actual Subbasin WGWE (based on HRUs and updated Gl. A)
+            es_obj_real(idx)%es_glfr(counter) = es_obj_real(idx)%es_gla(counter)/gla_sub_real(idx) ! Fraction of ES of Glacierized Subbasin Area
+            es_obj_real(idx)%es_glv(counter) = es_obj_real(idx)%es_gla(counter) * es_obj_real(idx)%es_glw(counter)/1.0e6/0.917 
 
     end do
     !end do
+    !! Make Mass Balance Correction
+    do i = 1, sb_cnt
+        vol1 = sum(es_obj_real(i)%es_glv)
+        vol2  = sum(es_obj(i)%es_glv)
+
+        if (vol2 > vol1) then
+            diff = vol2 - vol1
+
+            ! Count non-zero elements in es_obj_real(i)%es_glv
+            count_nonzero = 0
+            do j = 1, es_cnt
+                if (es_obj_real(i)%es_glv(j) > 0.0) count_nonzero = count_nonzero + 1
+            end do
+
+            if (count_nonzero > 0) then
+                dst = diff / count_nonzero
+
+                ! Add the missing volume equally to non-zero entries
+                do j = 1, es_cnt
+                    if (es_obj_real(i)%es_glv(j) > 0.0) then
+                        es_obj_real(i)%es_glv(j) = es_obj_real(i)%es_glv(j) + dst
+                        es_obj_real(i)%es_glw(j) = es_obj_real(i)%es_glw(j) + (dst/es_obj_real(i)%es_gla(j)*1.0e6)
+                    end if
+                end do
+            end if
+        end if
+    end do
     
     !! Initialize Subbasin Mass Balance Array
     allocate(glmb_a(sb_cnt))
@@ -213,7 +277,9 @@
     !! Write Initial Results to gl_mb_aa.txt
     do i = 1,sb_cnt ! Loop Over Subbasin
         do j = 1,es_cnt ! Loop over Glacier HRUs within that subbasin
-            write (89,8998) i,j,pco%yrc_start,0.000,es_obj_real(glsubs(i))%es_glw(j),es_obj_real(glsubs(i))%es_gla(j) ! 6 Variables
+            !write (89,8998) i,j,pco%yrc_start,0.000,es_obj_real(glsubs(i))%es_glw(j),es_obj_real(glsubs(i))%es_gla(j) ! 6 Variables
+            write (89,8998) i,j,pco%yrc_start,0.000,es_obj_real(i)%es_glw(j),es_obj_real(i)%es_gla(j) ! 6 Variables
+            !write (89,8998) i,j,pco%yrc_start,0.000,es_obj_real(mask3(i))%es_glw(j),es_obj_real(mask3(i))%es_gla(j) ! 6 Variables
             8998 format (i4,2x,i2,2x,i4,1x,e12.4,1x,g12.3,1x,e10.3)
         end do
     end do
@@ -231,8 +297,17 @@
     hru_glww2=0
 
     do j = 1,hru_cnt ! Loop over all Glacier HRUs 
-        !mask2 = (hrus_sub_assign==subs_gl(i)) ! Glacier HRU IDs (mask)
-        i = hrus_sub_assign(j)
+        !mask2 = (hrus_sub_assign==subs_gl(i)) ! Glacier HRU IDs (mask)        
+        subt = hrus_sub_assign(j) ! Subbasin in wich Glacier HRU is located
+        idx = 0
+        do i = 1, size(subs_gl)
+            if (subs_gl(i) == subt) then
+                idx = i
+                exit
+            end if
+        end do
+        if (idx == 0) cycle  ! Skip if subbasin not in glacier list
+        
         !! If Land Use of HRU = Glacier
         !if (mask2(j)) then ! If HRU is Glacier HRU (and part of the glacier mask)
         cropname=hru(glhruids(j))%LAND_USE_MGT_C(1:4) ! Crop Name to get ES #
@@ -261,7 +336,8 @@
         hru_gl_obj(j)%hru_glww  = hru_glww(j)
         hru_gl_obj(j)%hru_fr_es = hru_fr_es(j)
         hru_gl_obj(j)%hru_es_id = hru_es_id(j)
-        hru_gl_obj(j)%hru_sub_id = subs_gl(i)
+        hru_gl_obj(j)%hru_sub_id = subs_gl(idx)
+        hru_gl_obj(j)%mask_ind = idx
         !end if 
     end do
     !end do
