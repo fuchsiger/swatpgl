@@ -36,7 +36,8 @@ Both datasets are needed for the initialization of SWAT+GL. Glacier outlines for
 4. *swatgl_parameters.gl*
 5. *snow.sno* (already existing but modified)
 6. *hydrology.hru* (already existing but modified)
-7. *file.cio* (already existing but modifies)
+7. *file.cio* (already existing but modified)
+8. *cal_parms.cal* (already existing but modified)
 
 File names are hard-coded and thus must be used as written above. One example file for each can be found in the documentation folder.
 <br/> 
@@ -56,7 +57,7 @@ The **swat_gles.gl** is used for the glacier mass initialization of SWAT+GL. The
 
 ## Calibration Files
 
-All newly introduced parameters are considered in the SWAT+ calibration scheme and can be incorporated in the *calibration.cal* file by using the names as they are in the corresponding header of the files (e.g. header in *glaciers_hru.gl*). Correspondingly, the cal_parm.cal file has to be extended by the SWAT+GL parameters before.<br/>
+All newly introduced parameters are considered in the SWAT+ calibration scheme and can be incorporated in the *calibration.cal* file by using the names as they are in the corresponding header of the files (e.g. header in *glaciers_hru.gl*). Correspondingly, the *cal_parm.cal* file has to be extended by the SWAT+GL parameters before.<br/>
 
 ## New & Modified Output Files
 
@@ -82,11 +83,11 @@ Next, the land use map has to be modified according to the defined spacing. If y
 Each newly defined land use class needs a unique ID in the land use map to be distinguished by SWAT later on. For example, if your original land use map had the ID "200" for glacier you could use the IDs "201" up to "210", if we assume again an ES number of 10.
 <br/>
 See the following example:<br/>
-<img title="" src="./images/martell_lulc.png" alt="" width=""> 
+<img title="" src="./images/martell_lulc.png" alt="" width="597"> 
 
 <figcaption>Fig. 1: Original Land Use Map</figcaption>
 
-<img title="Logo title" src="./images/martell_lulc_es.png" alt="" width=""> 
+<img title="Logo title" src="./images/martell_lulc_es.png" alt="" width="583"> 
 
 <figcaption>Fig. 2: Modified Land Use Map with 10 new classes, 1 per ES</figcaption>
 
@@ -237,7 +238,7 @@ The columns refer to HRU ID and 5 parameters:
 
 - *gl_lag*: Glacier lag factor [-]. Similar to TIMP or snowmelt lag
 
-## Snow File Modification: snow.sno
+### Snow File Modification: snow.sno
 
 To make use of the newly introduced snow melt routines. In total 4 new columns are added as shown in  
 
@@ -253,7 +254,7 @@ To make use of the newly introduced snow melt routines. In total 4 new columns a
 
 - *srfac_s*: Shortwave radiation factor for snow [mm m²/(d*W)]; Only used for ETI (sm_model= 2) <br/>
 
-## Hydrology File Modification: hydrology.hyd
+### Hydrology File Modification: hydrology.hyd
 
 To determine more hydrology parameters in a spatially distributed way, such as lapse rates and surface runoff lags, 3 new columns need to be added as shown in Fig. 9.
 
@@ -271,7 +272,7 @@ Fig. 9: Modification of hydrology.hyd file.
 
 * *tlaps*: Temperature lag factor [°C/m]; Similar to the global tlaps.
 
-## Basin Parameter File Modification: parameters.bsn
+### Basin Parameter File Modification: parameters.bsn
 
 To make use of the newly introduced hydrological changes such as spatially distributed lapse rates and surface runoff lags, 1 existing flag can be modified (lapse) and 1 new column has to be added (surlag_sd) as shown in Fig. 10. 
 
@@ -285,13 +286,21 @@ Fig. 10: Modification of parameters.bsn file.
 
 - *lapse*: The lapse rates flag is extended to provide lapse rates spatially distributed; 0 = no lapse rates / 1 = global lapse rates / 2 = HRU-based lapse rates (must be set in hydrology.hyd)
 
-## File Cio Modification: file.cio
+### File Cio Modification: file.cio
 
 In the file.cio file just add glacier_hrus.gl to the hydrology line as illustrated below.
 
-![](./images/swatgl_file_cio.png)
+<img src="./images/swatgl_file_cio.png" title="" alt="" width="601">
 
 <figcaption>Fig. 11: File.cio adaption.</figcaption>
+
+### Calibration Parameters File: cal_parms.cal
+
+Don't forget to extend the cal_parms file by the newly introduced parameters (see also example file under the examples folder in Git). The number of active parameter at the beginning of the file has to be increased accordingly as well.
+
+<img src="./images/cal_parms_cal.png" title="" alt="" width="590">
+
+<figcaption>Fig. 12: Cal_parms.cal modification. </figcaption>
 
 ## Model Run
 
