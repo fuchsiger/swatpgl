@@ -265,6 +265,7 @@
                     if (es_obj_real(i)%es_glv(j) > 0.0) then
                         es_obj_real(i)%es_glv(j) = es_obj_real(i)%es_glv(j) + dst
                         es_obj_real(i)%es_glw(j) = es_obj_real(i)%es_glw(j) + (dst/es_obj_real(i)%es_gla(j)*1.0e6)
+                        es_obj_real(i)%es_glw_init(j) = es_obj_real(i)%es_glw(j) + (dst/es_obj_real(i)%es_gla(j)*1.0e6)
                     end if
                 end do
             end if
