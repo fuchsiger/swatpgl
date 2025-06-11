@@ -445,24 +445,36 @@
       case ("ph")
            soil(ielem)%ly(ly)%ph = chg_par(soil(ielem)%ly(ly)%ph,        &
                          chg_typ, chg_val, absmin, absmax)
-        
+    
        
-       !! BSN
-      case ("plaps")
-        bsn_prm%plaps = chg_par(bsn_prm%plaps,                         &
+      !! BSN
+      case ("plaps") ! HRU or Basin Plaps - TIMO SWAT+GL
+        if (bsn_cc%lapse==1) then
+            bsn_prm%plaps = chg_par(bsn_prm%plaps,                         &
                          chg_typ, chg_val, absmin, absmax)
-        
-      case ("tlaps")
-        bsn_prm%tlaps = chg_par(bsn_prm%tlaps,                         &
+        elseif (bsn_cc%lapse==2) then
+            hru(ielem)%hyd%plaps = chg_par(hru(ielem)%hyd%plaps,                         &
+                    chg_typ, chg_val, absmin, absmax)
+        end if
+      case ("tlaps") ! HRU or Basin Tlaps - TIMO SWAT+GL
+        if (bsn_cc%lapse==1) then
+          bsn_prm%tlaps = chg_par(bsn_prm%tlaps,                         &
                          chg_typ, chg_val, absmin, absmax)
-                                            
-      case ("surlag")
-        bsn_prm%surlag = chg_par(bsn_prm%surlag,                         &
-                         chg_typ, chg_val, absmin, absmax)
+        elseif (bsn_cc%lapse==2) then
+            hru(ielem)%hyd%tlaps = chg_par(hru(ielem)%hyd%tlaps,                         &
+                    chg_typ, chg_val, absmin, absmax)
+        end if                                  
+      case ("surlag") ! HRU or Basin Surlag - TIMO SWAT+GL
+        if (bsn_cc%surlag_sd==0) then
+          bsn_prm%surlag = chg_par(bsn_prm%surlag,                         &
+                        chg_typ, chg_val, absmin, absmax)
         do ihru = 1, sp_ob%hru
-          brt(ihru) = 1. - Exp(-bsn_prm%surlag / tconc(ihru))
+            brt(ihru) = 1. - Exp(-bsn_prm%surlag / tconc(ihru))
         end do
-        
+        elseif (bsn_cc%surlag_sd==1) then
+            hru(ielem)%hyd%surlag = chg_par(hru(ielem)%hyd%surlag,                         &
+                         chg_typ, chg_val, absmin, absmax)
+        end if
       case ("adj_pkr")
         bsn_prm%adj_pkr = chg_par(bsn_prm%adj_pkr,                      &
                          chg_typ, chg_val, absmin, absmax)

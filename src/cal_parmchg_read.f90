@@ -123,6 +123,15 @@
               cal_upd(i)%num_elem = sp_ob%chandeg
             case ("bsn")
               cal_upd(i)%num_elem = 1
+              IF (INDEX(cal_upd(i)%name, 'surlag') > 0 .AND. bsn_cc%surlag_sd == 1) THEN
+                  ! Timo SWAT+GL for spatially distributed lapse rates & surlag
+                  cal_upd(i)%num_elem = sp_ob%hru
+              END IF
+
+              IF (INDEX(cal_upd(i)%name, 'laps') > 0 .AND. bsn_cc%lapse == 2) THEN
+                  ! Timo SWAT+GL for spatially distributed lapse rates & surlag
+                  cal_upd(i)%num_elem = sp_ob%hru
+              END IF
             case ("pcp")
               cal_upd(i)%num_elem = db_mx%pcpfiles
             case ("tmp")
