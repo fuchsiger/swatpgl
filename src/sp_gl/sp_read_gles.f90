@@ -232,8 +232,13 @@
             es_obj_real(idx)%es_gla(counter) = es_obj_real(idx)%es_gla(counter) + ob(glhruids(j))%area_ha/100 ! ES Glacier Area Actual (km²)
             es_obj_real(idx)%es_gla_scale(counter) = es_obj_real(idx)%es_gla(counter)
             es_obj_real(idx)%es_gla_init(counter) = es_obj_real(idx)%es_gla(counter)
+            if (es_obj(idx)%es_gla(counter)==0) then ! Flag to not mix Glacier HRUs according to the land use code but that are not contained in the ES file 
+                es_obj_real(idx)%es_gla(counter) = 0
+                es_obj_real(idx)%es_gla_scale(counter) = 0
+                es_obj_real(idx)%es_gla_init(counter) = 0
+                CYCLE 
+            end if
             fac_area = es_obj(idx)%es_gla(counter)/es_obj_real(idx)%es_gla(counter) ! As the original WGWE corresponds to the initiliazed area it must be updated with the actual area 
-                            
             es_obj_real(idx)%es_glww(counter) = es_obj(idx)%es_glww(counter) * fac_area ! Actual ES WGWE (based on HRUs and updated Gl. A) 
             es_obj_real(idx)%es_glw(counter) = es_obj(idx)%es_glw(counter) * fac_area ! Actual ES GWE (based on HRUs and updated Gl. A) 
             es_obj_real(idx)%es_glw_init(counter) = es_obj(idx)%es_glw(counter) * fac_area ! Actual ES GWE (based on HRUs and updated Gl. A) 
@@ -318,7 +323,11 @@
             cropname = cropname(3:len_trim(cropname))     ! Include all characters starting from the 3rd
         end if
         read(cropname,"(I)") counter ! Get Index of ES (e.g. ES6 = 6)
-        hru_es_frac = ob(glhruids(j))%area_ha/100/es_obj_real(i)%es_gla(counter) !! HRU Fraction of ES
+        if (es_obj_real(i)%es_gla(counter)==0) then ! Flag to avoid mismatch between ES file and glacier HRU based on land use class
+            hru_es_frac = 0 !! HRU Fraction of ES
+        else
+            hru_es_frac = ob(glhruids(j))%area_ha/100/es_obj_real(i)%es_gla(counter) !! HRU Fraction of ES
+        end if
         hru_fr_es(j) = hru_es_frac ! HRU fraction of ES                                                              
         hru_es_id(j) = counter ! Assign ES ID to HRU
 

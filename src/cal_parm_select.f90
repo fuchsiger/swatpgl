@@ -474,6 +474,7 @@
         elseif (bsn_cc%surlag_sd==1) then
             hru(ielem)%hyd%surlag = chg_par(hru(ielem)%hyd%surlag,                         &
                          chg_typ, chg_val, absmin, absmax)
+            brt(ielem) = 1. - Exp(-hru(ielem)%hyd%surlag / tconc(ielem))
         end if
       case ("adj_pkr")
         bsn_prm%adj_pkr = chg_par(bsn_prm%adj_pkr,                      &
