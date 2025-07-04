@@ -11,14 +11,22 @@
     !! Initialize Glacier HRUS (HRU Areas & GWEs based on different Scales such as Basin, Total Gl. A, Subbasin etc.)  
     do j = 1,size(hru_gl_obj) ! Loop over all Glacier HRUs 
         !i = hrus_sub_assign(j)
-        i = hru_gl_obj(j)%mask_ind
-        ja = hru_gl_obj(j)%hru_es_id
+        i = hru_gl_obj(j)%mask_ind ! Sub Ind
+        ja = hru_gl_obj(j)%hru_es_id ! Es Ind
                 
         ! Assign Glacier HRU Object
         ! hru_gl_obj(j)%hru_gla = hru_gla(j)
         if (i>0) then
             hru_gl_obj(j)%hru_glww2 = es_obj_real(i)%es_glw(ja)
             hru_gl_obj(j)%hru_glww  = es_obj_real(i)%es_glw(ja) * hru_gl_obj(j)%hru_fr_es
+            if (es_obj_real(i)%es_gla_scale(ja) > 0.) then
+                !hru_gl_obj(j)%hru_gla_scale = hru_gl_obj(j)%hru_gla * es_obj_real(i)%es_gla_scale(ja)/es_obj_real(i)%es_gla_init(ja) ! Scaled Area
+                hru_gl_obj(j)%hru_gla_scale = hru_gl_obj(j)%hru_gla * (es_obj_real(i)%es_glw(ja) / es_obj_real(i)%es_glw_init(ja))**0.5 ! Scaled Area
+                
+            else
+                hru_gl_obj(j)%hru_gla_scale = 0.
+            end if
+            
         endif 
     end do      
     

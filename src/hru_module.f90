@@ -189,7 +189,8 @@
             real :: hru_fr_es = 0.      
             real :: hru_glww2 = 0.      
             real :: hru_glww = 0.      
-            real :: hru_gla = 0.      
+            real :: hru_gla = 0. 
+            real :: hru_gla_scale = 0.      
         end type hru_gl_db
         type (hru_gl_db), dimension (:), allocatable :: hru_gl_obj
         

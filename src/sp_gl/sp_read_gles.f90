@@ -342,6 +342,7 @@
         ! Assign Glacier HRU Object
         hru_gl_obj(j)%hru_id = glhruids(j)
         hru_gl_obj(j)%hru_gla   = hru_gla(j)
+        hru_gl_obj(j)%hru_gla_scale   = hru_gla(j)
         hru_gl_obj(j)%hru_glww2 = hru_glww2(j)
         hru_gl_obj(j)%hru_glww  = hru_glww(j)
         hru_gl_obj(j)%hru_fr_es = hru_fr_es(j)

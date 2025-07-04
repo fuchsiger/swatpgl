@@ -139,7 +139,8 @@
                 idx = hru_gl_obj(glid)%mask_ind
                 if (idx>0) then ! Check whether no mini glacierized subbasin
                     glmb_a(idx)%glmb = glmb_a(idx)%glmb + &
-                        ((hwb_d(j)%glacc - hwb_d(j)%glmlt - hwb_d(j)%glsubl)*ob(j)%area_ha*10000/1000) ! lsu_elem(j)%bsn_frac  HRU fraction in basin             
+                        ((hwb_d(j)%glacc - hwb_d(j)%glmlt - hwb_d(j)%glsubl)*hru_gl_obj(glid)%hru_gla_scale*1000) ! lsu_elem(j)%bsn_frac  HRU fraction in basin             
+                       ! ((hwb_d(j)%glacc - hwb_d(j)%glmlt - hwb_d(j)%glsubl)*ob(j)%area_ha*10000/1000) ! lsu_elem(j)%bsn_frac  HRU fraction in basin             
                 end if
             end if
         end if
