@@ -1,6 +1,6 @@
 # SWAT+GL Rev61.0 <img title="" src="./images/spgl_logo.png" alt="" width="81">
 
-This repository contains SWAT+GL, a modified version of the hydrological model [SWAT+](https://swat.tamu.edu/) (Soil Water Assessment Tool). SWAT+GL extends the traditional SWAT+ by explicitly considering glacier dynamics. It builds on SWAT-GL, the original initiative to improve the capabilities of the traditional SWAT2012. 
+This repository contains SWAT+GL, a modified version of the hydrological model [SWAT+](https://swat.tamu.edu/) (Soil Water Assessment Tool). SWAT+GL extends the traditional SWAT+ by explicitly considering glacier dynamics. It builds on SWAT-GL, the original initiative to improve the capabilities of the traditional SWAT2012, which can be accessed [here](https://gitlab.com/lshm1/swat-g). 
 
 SWAT+GL was developed to improve the applicability of SWAT+ in high-mountaineous & glaciated basins. Besides, some minor modifications were made to make lapse rates and surface runoff lag spatially distirbuted rather than global parameters.
 Summarized, it consists of:
@@ -16,13 +16,17 @@ The extended snow module contains a collection of snow melt approaches, that cou
 <br/>In the original SWAT+, important parameters (particularly for mountain regions) such as TLAPS, PLAPS and SURLAG, are global parameters. In SWAT+GL they are incorporated on the HRU level to give users more flexibility. 
 <br/>
 
-Further insights about the implemention in SWAT can be received from our recently published Technical Note ([Schaffhauser et al. 2024](https://onlinelibrary.wiley.com/doi/10.1111/1752-1688.13199)), as well as our application article available as preprint in HESS ([Schaffhauser et al. 2024b](https://hess.copernicus.org/preprints/hess-2024-89/)).
+Further insights about the implemention in SWAT can be received from our recently published Technical Note ([Schaffhauser et al. 2024](https://onlinelibrary.wiley.com/doi/10.1111/1752-1688.13199)), as well as our application article available in HESS ([Schaffhauser et al. 2025](https://hess.copernicus.org/articles/29/3227/2025/#abstract)).
 
 ## How to Cite
 
 In case you will use SWAT+GL, please cite as follows:<br/> 
 
 *Schaffhauser, Timo, Ye Tuo, Florentin Hofmeister, Gabriele Chiogna, Jingshui Huang, Fabian Merk and Markus Disse. 2024. “ SWAT-GL: A New Glacier Routine For the Hydrological Model SWAT.” JAWRA Journal of the American Water Resources Association 00 (0): 1–12. https://doi.org/10.1111/1752-1688.13199.*
+
+And in case you want to specify our application/evaluation study you can refer to:<br/>
+
+Schaffhauser, T., Hofmeister, F., Chiogna, G., Merk, F., Tuo, Y., Machnitzke, J., Alcamo, L., Huang, J., and Disse, M.: Merits and limits of SWAT-GL: application in contrasting glaciated catchments, Hydrol. Earth Syst. Sci., 29, 3227–3256, https://doi.org/10.5194/hess-29-3227-2025, 2025.
 
 ## Contact
 
