@@ -114,7 +114,12 @@
      ! Timo Annual Glacier Mass Balance
           ! Timo Glacier Pars
      type glacier_mass_balance
-         real :: glmb = 0.   !m³           |Glacier Mass Balance per Subbasin
+         real :: glmb = 0.     !m³/a           |Annual Mass Balance per Subbasin 
+         real :: glmb_s = 0.   !m³/a           |Summer Mass Balance per Subbasin 
+         real :: glmb_w = 0.   !m³/a           |Winter Mass Balance per Subbasin 
+         real :: bn = 0.       !m/a            |Specific Annual Mass Balance per Subbasin 
+         real :: bs = 0.       !m/a            |Specific Summer Mass Balance per Subbasin 
+         real :: bw = 0.       !m/a            |Specific Winter Mass Balance per Subbasin 
      end type glacier_mass_balance     
      type (glacier_mass_balance), dimension (:), allocatable :: glmb_a
      

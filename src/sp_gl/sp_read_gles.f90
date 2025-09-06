@@ -21,7 +21,7 @@
     integer :: idx
     real :: vol1, vol2, diff, dst, count_nonzero
     real :: vol_check, hru_es_frac, subtest
-    character(len=14) :: hedgl(6)
+    character(len=14) :: hedgl(9)
     
     !! Initialize Variables
     sb_cnt = 0.
@@ -33,10 +33,11 @@
     vol2 = 0.
     !! e) Prepare Annual Output Summary File for Writing SWAT+GL Outputs
     open(unit=89, file="gl_mb_aa.txt")
-    hedgl = (/" Sub","  ES","  yr","   dM_m3","   GWE_mm"," Agl_km2"/)
+    hedgl = (/"Sub","ES","yr","dM_m3","bn_m","bs_m","bw_m","GWE_mm","Agl_km2"/)
     write (89,8999) hedgl
-    8999 format (3a4,2a14,1a10) 
-     
+    !8999 format (3a4,1a14,3a10,1a14,a10) 
+8999 format(a4, 2x, a2, 2x, a4, 1x, a12,1x, a8,1x, a8,1x, a8,1x, a12,1x, a10)
+         
     !! Read in swat_gles.gl File
     !! a) Glacier ES Infos per Subbasin
     open(newunit=IU, file='swat_gles.gl',status='old',action='read') ! Variante 1
@@ -284,12 +285,11 @@
     do i = 1,sb_cnt ! Loop Over Subbasin
         do j = 1,es_cnt ! Loop over Glacier HRUs within that subbasin
             !write (89,8998) i,j,pco%yrc_start,0.000,es_obj_real(glsubs(i))%es_glw(j),es_obj_real(glsubs(i))%es_gla(j) ! 6 Variables
-            write (89,8998) i,j,pco%yrc_start,0.000,es_obj_real(i)%es_glw(j),es_obj_real(i)%es_gla(j) ! 6 Variables
-            !write (89,8998) i,j,pco%yrc_start,0.000,es_obj_real(mask3(i))%es_glw(j),es_obj_real(mask3(i))%es_gla(j) ! 6 Variables
-            8998 format (i4,2x,i2,2x,i4,1x,e12.4,1x,g12.3,1x,e10.3)
+            write (89,8998) es_obj_real(i)%sub_id,j,pco%yrc_start,0.000,0.000,0.000,0.000,es_obj_real(i)%es_glw(j),es_obj_real(i)%es_gla(j) ! 6 Variables
         end do
     end do
-    
+!8998 format(i4, 2x, i2, 2x, i4, 1x, e12.4,1x, f8.3, 1x, f8.3, 1x, f8.3, 1x, g12.3, 1x, e10.3)  
+     8998 format(i4, 2x, i2, 2x, i4, 1x, e12.4,1x, f8.3,1x, f8.3,1x, f8.3,1x, g12.3,1x, e10.3)
     !! e) Create Glacier HRUs
     !! Initialize Glacier HRUS (HRU Areas & GWEs based on different Scales such as Basin, Total Gl. A, Subbasin etc.)
     counter=0
@@ -341,10 +341,10 @@
                                             
         ! Assign Glacier HRU Object
         hru_gl_obj(j)%hru_id = glhruids(j)
-        hru_gl_obj(j)%hru_gla   = hru_gla(j)
-        hru_gl_obj(j)%hru_gla_scale   = hru_gla(j)
+        hru_gl_obj(j)%hru_gla = hru_gla(j)
+        hru_gl_obj(j)%hru_gla_scale = hru_gla(j)
         hru_gl_obj(j)%hru_glww2 = hru_glww2(j)
-        hru_gl_obj(j)%hru_glww  = hru_glww(j)
+        hru_gl_obj(j)%hru_glww = hru_glww(j)
         hru_gl_obj(j)%hru_fr_es = hru_fr_es(j)
         hru_gl_obj(j)%hru_es_id = hru_es_id(j)
         hru_gl_obj(j)%hru_sub_id = subs_gl(idx)

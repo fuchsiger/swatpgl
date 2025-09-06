@@ -127,20 +127,29 @@
           hpw_m(j) = hpwz
           hls_m(j) = hlsz
         end if
-        !! SWAT+GL Check End of Glaciological Year
+        !! SWAT+GL Check End of Glaciological Year and calculate mass balance
         if (time%day_mo == 30 .and. time%mo == 9 .and. j==sp_ob%HRU) then
+            glmb_a%glmb_s = glmb_a%glmb - glmb_a%glmb_w ! Summer Mass balance as residual calculated (total - winter = summer)
             call sp_deltah
             glid = hru_index_map(j)
             glmb_a%glmb = 0.
+            glmb_a%glmb_s = 0.
+
         else
             glid = hru_index_map(j)
             if (glid>0) then
                 subid = hru_gl_obj(glid)%hru_sub_id
                 idx = hru_gl_obj(glid)%mask_ind
                 if (idx>0) then ! Check whether no mini glacierized subbasin
+                    ! Annual Mass Balance
                     glmb_a(idx)%glmb = glmb_a(idx)%glmb + &
-                        ((hwb_d(j)%glacc - hwb_d(j)%glmlt - hwb_d(j)%glsubl)*hru_gl_obj(glid)%hru_gla_scale*1000) ! lsu_elem(j)%bsn_frac  HRU fraction in basin             
-                       ! ((hwb_d(j)%glacc - hwb_d(j)%glmlt - hwb_d(j)%glsubl)*ob(j)%area_ha*10000/1000) ! lsu_elem(j)%bsn_frac  HRU fraction in basin             
+                        ((hwb_d(j)%glacc - hwb_d(j)%glmlt - hwb_d(j)%glsubl)*hru_gl_obj(glid)%hru_gla_scale*1000) ! lsu_elem(j)%bsn_frac  HRU fraction in basin 
+                    ! Winter Mass Balance
+                    if (time%mo >= 10 .or. time%mo <= 4) then
+                        glmb_a(idx)%glmb_w = glmb_a(idx)%glmb_w + &
+                            ((hwb_d(j)%glacc - hwb_d(j)%glmlt - hwb_d(j)%glsubl)*hru_gl_obj(glid)%hru_gla_scale*1000) ! lsu_elem(j)%bsn_frac  HRU fraction in basin   
+                       ! ((hwb_d(j)%glacc - hwb_d(j)%glmlt - hwb_d(j)%glsubl)*ob(j)%area_ha*10000/1000) ! lsu_elem(j)%bsn_frac  HRU fraction in basin    
+                    end if
                 end if
             end if
         end if
