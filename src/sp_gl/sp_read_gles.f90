@@ -285,7 +285,7 @@
     do i = 1,sb_cnt ! Loop Over Subbasin
         do j = 1,es_cnt ! Loop over Glacier HRUs within that subbasin
             !write (89,8998) i,j,pco%yrc_start,0.000,es_obj_real(glsubs(i))%es_glw(j),es_obj_real(glsubs(i))%es_gla(j) ! 6 Variables
-            write (89,8998) es_obj_real(i)%sub_id,j,pco%yrc_start,0.000,0.000,0.000,0.000,es_obj_real(i)%es_glw(j),es_obj_real(i)%es_gla(j) ! 6 Variables
+            write (89,8998) es_obj_real(i)%sub_id,j,pco%yrc_start,0.000,0.000,0.000,0.000,es_obj_real(i)%es_glw(j),es_obj_real(i)%es_gla(j) ! 9 Variables
         end do
     end do
 !8998 format(i4, 2x, i2, 2x, i4, 1x, e12.4,1x, f8.3, 1x, f8.3, 1x, f8.3, 1x, g12.3, 1x, e10.3)  

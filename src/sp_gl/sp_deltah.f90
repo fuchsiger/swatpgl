@@ -63,11 +63,15 @@ subroutine sp_deltah
             es_obj_real(j)%es_gla(ii)       = 0.0
             es_obj_real(j)%es_gla_scale(ii) = 0.0
             es_obj_real(j)%es_glw(ii)       = 0.0
+            vv2                             = 0.0
+            glmb_a(j)%bs                    = 0.0
+            glmb_a(j)%bw                    = 0.0
+            
         end do
 
         ! write 0 lines (ice-free)        
         do ii = 1, maxval(esids)
-            write(89,8998) es_obj_real(j)%sub_id, ii, time%yrc, vv, vv2, &
+            write(89,8998) es_obj_real(j)%sub_id, ii, time%yrc, vv, vv2, glmb_a(j)%bs, glmb_a(j)%bw, &
                            es_obj_real(j)%es_glw(ii), es_obj_real(j)%es_gla_scale(ii)
         end do
         cycle   ! skip redistribution / melt update
