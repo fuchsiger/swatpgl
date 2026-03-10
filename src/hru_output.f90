@@ -130,7 +130,14 @@
         !! SWAT+GL Check End of Glaciological Year and calculate mass balance
         if (time%day_mo == 30 .and. time%mo == 9 .and. j==sp_ob%HRU) then
             glmb_a%glmb_s = glmb_a%glmb - glmb_a%glmb_w ! Summer Mass balance as residual calculated (total - winter = summer)
-            call sp_deltah
+            ! Select glacier evolution model based on flag
+            ! evo_model = 0: Delta-h method (Huss et al.)
+            ! evo_model = 1: V-A Scaling method (Ohmura et al.)
+            if (glcode%evo_model == 1) then
+                call sp_va_scaling
+            else
+                call sp_deltah
+            end if
             glid = hru_index_map(j)
             glmb_a%glmb = 0.
             glmb_a%glmb_s = 0.

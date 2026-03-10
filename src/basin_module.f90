@@ -89,19 +89,22 @@
 
       ! Timo Glacier Codes/Control Parameters
       type glacier_codes
-            integer :: sm_model = 0   !-     ! snow melt model (0 = Default, 1 = HTI (Hock 1999), 2 = ETI (Pelliccoti 2005), 3 = Exp.TI (Magnusson 2014))     
+            integer :: sm_model = 0   !-     ! snow melt model (0 = Default, 1 = HTI (Hock 1999), 2 = ETI (Pelliccoti 2005), 3 = Exp.TI (Magnusson 2014))
             integer :: ros_flag = 0   !-     ! Precip. on Snow (ROS) Inclusion (Flag: 0 = No, 1 = yes)
             integer :: gm_init = 1    !-     ! GLMLT Initialization Method (Flag: 0 = GC & SC comp, 1 = SC * GLMLT)
             integer :: fgmlt_cor = 0  !-     ! Correct GLMLT Degree Day Factor if smaller than SMLT Degree Day Factor (0 = no; 1 = yes)
             integer :: pmix_flag = 0  !-     ! Mixed Precip Flag (0 = no; 1 = yes)
-            integer :: acc_mod = 0    !-     ! Accumulation Model (0 = Luo et al. 2015; 1 = Constant turnover)      
+            integer :: acc_mod = 0    !-     ! Accumulation Model (0 = Luo et al. 2015; 1 = Constant turnover)
+            integer :: evo_model = 0  !-     ! Glacier Evolution Model (0 = Delta-h, 1 = V-A Scaling)
       end type glacier_codes
       type (glacier_codes), dimension (:), allocatable :: glcode
       
       type glacier_params
-            real :: tmix_ul = 6.5        !deg C ! Base Temp for Mixed Precip (below which mixed pcp occurs) [°C]
+            real :: tmix_ul = 6.5        !deg C ! Base Temp for Mixed Precip (below which mixed pcp occurs) [degC]
             real :: pfac = 1.0           !deg C ! Melt factor for rain on snow events [mm/mm rain]
             real :: pthr = 1.0           !-     ! Rainfall threshold height at which additional melt occurs [mm/d]
+            real :: va_c = 0.037         !-     ! V-A scaling constant (Ohmura et al. 1992) [km3/km2]
+            real :: va_gamma = 1.36      !-     ! V-A scaling exponent (Ohmura et al. 1992) [-]
 
             !real :: exp_fac = 0.5     !-     ! Adjustment Factor for Exponential Snow Melt Model [-]
       end type glacier_params
