@@ -648,10 +648,10 @@ The glaciological year is defined as October 1 to September 30.
 
 The theoretical framework of the SWAT+GL glacier routine is based on the following key publications:
 
-- **Huss, M., J. Hock, A. Bauder, and M. Funk**, 2010: Corrigendum to "Extending glacier mass-balance observations to a balance year using a simplified equilibrium-line altitude approach" - Ann. Glaciol., 50(50), 193-200.
+1. Huss, M., Jouvet, G., Farinotti, D. and Bauder, A.: "Future high-mountain hydrology: a new parameterization of glacier retreat", Hydrol. Earth Syst. Sci., 14, 815–829, https://doi.org/10.5194/hess-14-815-2010, 2010.
 
-- **Huss, M., and R. Hock**, 2015: A new model for global glacier change and sea-level rise. Frontiers in Earth Science, 3, 54.
+2. Huss, M., Farinotti, D., Bauder, A. and Funk, M.: "Modelling runoff from highly glacierized alpine drainage basins in a changing climate." Hydrol. Process., 22: 3888-3902. https://doi.org/10.1002/hyp.7055, 2008.
 
-- **Seibert, J., K. S. R. McDonnell, and R. H. Woodsmith**, 2018: Technical note: Representing glacier geometry changes in a semi-distributed hydrological model. Hydrology and Earth System Sciences, 22, 2211-2224.
+3. Schaffhauser, T., Tuo., Y, Hofmeister, F., Chiogna, G., Huang, J., Merk, F. and Disse, M.: “SWAT-GL: A New Glacier Routine For the Hydrological Model SWAT.” JAWRA Journal of the American Water Resources Association 60 (3): 755–766. https://doi.org/10.1111/1752-1688.13199, 2024.
 
-- **Luo, Y., J. G. Arnold, S. Liu, Y. Wang, and X. Chen**, 2012: Inclusion of glacier processes for distributed hydrological modeling at basin scale with application to a watershed in Tianshan Mountains, northwest China. Journal of Hydrology, 477, 72-85.
+4. Schaffhauser, T., Hofmeister, F., Chiogna, G., Merk, F., Tuo, Y., Machnitzke, J., Alcamo, L., Huang, J., and Disse, M.: "Merits and limits of SWAT-GL: application in contrasting glaciated catchments", Hydrol. Earth Syst. Sci., 29, 3227–3256, https://doi.org/10.5194/hess-29-3227-2025, 2025.
