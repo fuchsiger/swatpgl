@@ -360,76 +360,33 @@ An example _swatgl_control.txt_ file is provided in the documentation folder of 
 
 ### General Formulation of Snowmelt in SWAT
 
-The standard SWAT snowmelt model uses a degree-day approach where melt is proportional to the difference between mean daily temperature and a base melt temperature:
-
 $$
 M = \left(\frac{T_{mx} + T_{snow}}{2} - T_{smlt}\right) \cdot b_{smlt} \cdot sno_{cov}\\[5pt]
 b_{smlt} = \frac{SMFMX + SMFMN}{2} + \left(\frac{SMFMX - SMFMN}{2} \cdot sin\left[\frac{2\pi}{365}(i-81)\right]\right)
 $$
 
-Where:
-- $M$ = Snowmelt amount [mm]
-- $T_{mx}$ = Maximum daily air temperature [°C]
-- $T_{snow}$ = Snowpack temperature [°C]
-- $T_{smlt}$ = Base melt temperature (typically 0°C) [°C]
-- $b_{smlt}$ = Degree-day melt factor [mm/(°C·d)]
-- $sno_{cov}$ = Snow cover fraction [-]
-- $SMFMX$ = Maximum melt factor on June 21 [mm/(°C·d)]
-- $SMFMN$ = Minimum melt factor on December 21 [mm/(°C·d)]
-- $i$ = Day of year
-
-The seasonal variation in the melt factor accounts for differences in solar radiation intensity throughout the year, with maximum melt occurring around summer solstice.
-
 ### Potential Radiation Model (HTI)
-
-The Hock Temperature-Index model (1999) extends the standard degree-day approach by incorporating potential direct solar radiation:
 
 $$
 M = \left(\frac{T_{mx} + T_{snow}}{2} - T_{smlt}\right) \cdot b_{tot}\\[5pt]
 b_{tot} = b_{smlt} + f_{rad} \cdot I_{pot}
 $$
 
-Where:
-- $b_{tot}$ = Total melt factor [mm/(°C·d)]
-- $f_{rad}$ = Radiation melt factor [mm·m²/(d·W·°C)]
-- $I_{pot}$ = Potential direct solar radiation [W/m²]
-
-This model accounts for the significant contribution of solar radiation to snowmelt, particularly at high-elevation sites with clear skies. The radiation term is particularly important during spring when solar angles increase but air temperatures remain low.
-
 ### Enhanced Temperature Index Model (ETI)
-
-The Enhanced Temperature Index model (Pellicciotti et al., 2005) incorporates shortwave radiation with surface albedo:
 
 $$
 M = \left(\frac{T_{mx} + T_{snow}}{2} - T_{smlt}\right) \cdot b_{tot}\\[5pt]
 b_{tot} = b_{smlt} + f_{swr} (1-\alpha) \cdot G
 $$
 
-Where:
-- $f_{swr}$ = Shortwave radiation melt factor [mm·m²/(d·W)]
-- $\alpha$ = Surface albedo [-]
-- $G$ = Incoming shortwave radiation [W/m²]
-
-The ETI model separates the temperature-dependent and radiation-dependent components of melt, providing improved estimates in situations where radiation dominates melt processes.
-
 ### Exponential Temperature Index (ExpTI)
-
-The Exponential Temperature Index (Magnusson et al., 2014) provides a more physically realistic representation of the temperature-melt relationship:
 
 $$
 M = b_{smlt} \cdot m_m(T_{m} + ln(1+e^{-T_m})) \\[5pt]
 T_m = \frac{T_{mx}-T_{smlt}}{m_m}
 $$
 
-Where:
-- $m_m$ = Melt factor scaling parameter [°C]
-- $T_m$ = Normalized temperature [-]
-
-This formulation produces a smoother transition around the melting point compared to the linear degree-day approach, better representing the non-linear increase in melt energy with increasing temperature.
-
 ### Rain on Snow (RoS)
-
-Rain-on-snow events can generate significant additional melt due to the release of latent heat from rainfall and the sensible heat flux from warm rain. The ROS correction (Warner et al., 2018) adds a precipitation-dependent melt term:
 
 $$
 M = \left(\frac{T_{mx} + T_{snow}}{2} - T_{smlt}\right) \cdot b_{tot}\\[5pt]
@@ -439,219 +396,17 @@ b_{wd}(P_t - P_{thr}), & \text{if } P_t>P_{thr}\\
 0, & \text{if } P_t \leq P_{thr}\end{cases}
 $$
 
-Where:
-- $b_{wet}$ = Wet-day melt contribution [mm/(°C·d)]
-- $b_{wd}$ = Wet-day melt factor [mm/(mm·°C·d)]
-- $P_t$ = Total precipitation [mm]
-- $P_{thr}$ = Precipitation threshold for additional melt [mm]
-
-The ROS correction is activated when precipitation exceeds a threshold, representing the energy exchange from warm rain falling on cold snowpack.
-
 ### Mixed Precipitation
 
-In mountain environments, precipitation can occur as both snow and rain within the same event. The mixed precipitation model (Magnusson et al., 2014) allows for a gradual transition between solid and liquid precipitation:
-
 $$
-SF =
-\begin{cases}
+SF =  
+\begin{cases} 
 P, & T_{d} \leq T_{sf}\\
 \frac{P}{1 + e^{T_p}}, &  T_{d} > T_{sf} \text{ and } T_{d} \leq T_{mix}
 \end{cases} \\[5pt]
 T_p = \frac{T_{d}-T_{sf}}{T_{mix} - T_{sf}}
 $$
 
-Where:
-- $SF$ = Snowfall amount [mm]
-- $P$ = Total precipitation [mm]
-- $T_{d}$ = Daily mean temperature [°C]
-- $T_{sf}$ = Temperature below which all precipitation is snow (snowfall threshold) [°C]
-- $T_{mix}$ = Temperature above which all precipitation is rain [°C]
-
-This approach uses a logistic function to smoothly transition between solid and liquid precipitation across the temperature range, providing more realistic precipitation type partitioning in transitional climates.
-
 ## b) Glacier Processes
 
-SWAT+GL implements a comprehensive glacier routine that simulates glacier mass balance and evolution based on the Δh-parameterization approach. The glacier module operates on Elevation Sections (ES) within each subbasin, allowing for spatially distributed glacier modeling. This section describes the theoretical framework underlying the glacier processes implemented in SWAT+GL.
-
-### 1. Glacier Mass Balance
-
-The glacier mass balance in SWAT+GL is calculated using a temperature-degree day approach, similar to the snowmelt routine but with glacier-specific parameters. The mass balance consists of three main components:
-
-- **Glacier Accumulation (glacc)**: Snow that transforms into ice through metamorphosis
-- **Glacier Melt (glmlt)**: Ice melting due to positive temperatures
-- **Glacier Sublimation (glsubl)**: Direct sublimation from glacier ice (optional)
-
-#### Glacier Accumulation
-
-Glacier accumulation represents the transformation of snow to ice. SWAT+GL implements two accumulation models, selectable via the `acc_mod` parameter in the *swatgl_codes.gl* file:
-
-**Constant Turnover Model (acc_mod = 1):**
-$$
-glacc = P_{snow} \cdot f_{accu} \cdot f_{cov}
-$$
-
-Where:
-- $P_{snow}$ = Snowfall amount [mm]
-- $f_{accu}$ = Accumulation factor (typically 0.001-0.005) [-]
-- $f_{cov}$ = Snow cover fraction [-]
-
-**Seasonally Varying Model (acc_mod = 0):**
-$$
-glacc = P_{snow} \cdot f_{accu} \cdot \left(1 + \sin\left[\frac{2\pi}{365}(d - 81)\right]\right) \cdot f_{cov}
-$$
-
-Where $d$ is the day of year. This approach follows the methodology of Luo et al. (2012), accounting for seasonal variations in snow metamorphosis rates.
-
-#### Glacier Melt
-
-Glacier melt is calculated using a temperature-index approach similar to snowmelt but with glacier-specific parameters:
-
-$$
-glmlt = gmfac \cdot \left(\frac{T_{ice} + T_{max}}{2} - T_{glmt}\right) \cdot (1 - f_{frz}) \cdot (1 - f_{cov})
-$$
-
-Where:
-- $gmfac$ = Glacier melt factor [mm/(°C·d)], varying seasonally:
-  $$
-  gmfac = \frac{glmfmx + glmfmn}{2} + \sin\left[\frac{2\pi}{365}(d - 81)\right] \cdot \frac{glmfmx - glmfmn}{2}
-  $$
-- $T_{ice}$ = Ice temperature with lag effect [°C]
-- $T_{max}$ = Maximum daily temperature [°C]
-- $T_{glmt}$ = Glacier melt temperature [°C]
-- $f_{frz}$ = Refreezing factor [-]
-- $f_{cov}$ = Snow cover fraction [-]
-
-The ice temperature is calculated using a lag factor:
-$$
-T_{ice} = T_{ice}^{prev} \cdot (1 - f_{lag}) + T_{ave} \cdot f_{lag}
-$$
-
-Where $f_{lag}$ is the glacier lag factor (`gl_lag`), analogous to the snow temperature lag factor (TIMP) in standard SWAT.
-
-#### Refreezing
-
-Part of the meltwater can refreeze within the glacier, releasing latent heat. This is controlled by the refreezing factor $f_{frz}$:
-$$
-glmlt_{effective} = glmlt \cdot (1 - f_{frz})
-$$
-
-### 2. Glacier Evolution (Δh-Parameterization)
-
-The Δh-parameterization, developed by Huss et al. (2010), is used to simulate changes in glacier geometry (area and thickness) based on mass balance changes. This approach is particularly suitable for large-scale hydrological modeling as it avoids the need for explicit ice dynamics.
-
-#### Normalized Elevation
-
-For each Elevation Section (ES), a normalized elevation is calculated:
-$$
-e_{norm} = \frac{z_{max} - (z_{ES} - \Delta z)}{z_{max} - (z_{min} - 2\Delta z)}
-$$
-
-Where:
-- $z_{max}$ = Maximum glacier elevation in the subbasin [m]
-- $z_{min}$ = Minimum glacier elevation in the subbasin [m]
-- $z_{ES}$ = Upper elevation limit of the ES [m]
-- $\Delta z$ = Elevation spacing between ES [m]
-
-#### Elevation-Dependent Thinning Function
-
-The thinning function $\Delta h$ describes how mass balance changes are distributed across the glacier elevation range. Different parameter sets are used based on glacier size:
-
-**For large glaciers (>20 km²):**
-$$
-\Delta h(e_{norm}) = (e_{norm} - 0.02)^6 + 0.12 \cdot (e_{norm} - 0.02)
-$$
-
-**For medium glaciers (5-20 km²):**
-$$
-\Delta h(e_{norm}) = (e_{norm} - 0.05)^4 + 0.19 \cdot (e_{norm} - 0.05) + 0.01
-$$
-
-**For small glaciers (<5 km²):**
-$$
-\Delta h(e_{norm}) = (e_{norm} - 0.3)^2 + 0.6 \cdot (e_{norm} - 0.3) + 0.09
-$$
-
-#### Mass Redistribution
-
-The annual mass balance change $\Delta V$ (in volume units) is distributed according to the thinning function:
-$$
-f_s = \frac{\Delta V}{\sum_{i=1}^{N} A_i \cdot \Delta h(e_{norm,i})}
-$$
-
-Where $A_i$ is the area of elevation section $i$. The new ice water equivalent for each ES is:
-$$
-GWE_{new} = GWE_{old} + f_s \cdot \Delta h \cdot 1000
-$$
-
-#### Glacier Area Scaling
-
-Glacier area is updated based on the change in ice volume using a scaling relationship:
-$$
-A_{new} = A_{init} \cdot \left(\frac{GWE_{new}}{GWE_{init}}\right)^{0.5}
-$$
-
-This follows the approach suggested by Seibert et al. (2018) and Huss and Hock (2015), assuming a linear relationship between glacier thickness and area changes.
-
-#### Glacier Recession
-
-When ice thickness becomes negative (complete ablation), the ES is marked as ice-free:
-- Glacier area is set to zero
-- Ice water equivalent is set to zero
-- The minimum elevation of the glacier is updated if the lowest ES becomes ice-free
-
-Excess melt volume from completely ablated sections is redistributed to lower-elevation sections through an iterative process.
-
-### 3. Glacier State Variables
-
-The glacier module tracks the following state variables for each ES:
-
-| Variable | Unit | Description |
-|----------|------|-------------|
-| $GWE$ | mm | Glacier water equivalent (ice thickness) |
-| $A_{gl}$ | km² | Glacier area |
-| $A_{gl,scale}$ | km² | Scaled glacier area (accounting for geometry changes) |
-| $z_{min}$ | m | Minimum glacier elevation |
-
-### 4. Glacier Parameters
-
-The glacier routine uses the following parameters (defined in *glacier_hrus.gl*):
-
-| Parameter | Unit | Description |
-|-----------|------|-------------|
-| `glmtmp` | °C | Glacier melt temperature threshold |
-| `glmfmx` | mm/(°C·d) | Maximum glacier melt factor (June 21) |
-| `glmfmn` | mm/(°C·d) | Minimum glacier melt factor (December 21) |
-| `f_frz` | - | Refreezing factor |
-| `f_accu` | - | Accumulation factor (snow-to-ice conversion) |
-| `tfac_i` | mm/(d·°C) | Temperature degree day factor for ice (HTI/ETI) |
-| `rfac_i` | mm·m²/(d·W·°C) | Radiation factor for ice (HTI) |
-| `srfac_i` | mm·m²/(d·W) | Shortwave radiation factor for ice (ETI) |
-| `gl_lag` | - | Glacier temperature lag factor |
-
-### 5. Mass Balance Output
-
-SWAT+GL provides detailed mass balance information through the *gl_mb_aa.txt* output file, which includes:
-
-- **Sub**: Subbasin ID
-- **ES**: Elevation Section ID
-- **yr**: Year
-- **dM_m3**: Net mass balance change [m³]
-- **bn_m**: Specific net mass balance [m w.eq.]
-- **bs_m**: Specific summer mass balance [m w.eq.]
-- **bw_m**: Specific winter mass balance [m w.eq.]
-- **GWE_mm**: Glacier water equivalent [mm]
-- **Agl_km2**: Glacier area [km²]
-
-The glaciological year is defined as October 1 to September 30.
-
-### 6. References
-
-The theoretical framework of the SWAT+GL glacier routine is based on the following key publications:
-
-- **Huss, M., J. Hock, A. Bauder, and M. Funk**, 2010: Corrigendum to "Extending glacier mass-balance observations to a balance year using a simplified equilibrium-line altitude approach" - Ann. Glaciol., 50(50), 193-200.
-
-- **Huss, M., and R. Hock**, 2015: A new model for global glacier change and sea-level rise. Frontiers in Earth Science, 3, 54.
-
-- **Seibert, J., K. S. R. McDonnell, and R. H. Woodsmith**, 2018: Technical note: Representing glacier geometry changes in a semi-distributed hydrological model. Hydrology and Earth System Sciences, 22, 2211-2224.
-
-- **Luo, Y., J. G. Arnold, S. Liu, Y. Wang, and X. Chen**, 2012: Inclusion of glacier processes for distributed hydrological modeling at basin scale with application to a watershed in Tianshan Mountains, northwest China. Journal of Hydrology, 477, 72-85.
+Coming soon
